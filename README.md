@@ -180,7 +180,7 @@ Bibtex entry:
 In Brazilian folklore, Tupã is considered a "manifestation of God in the form of thunder". To know more, refer to [this](https://en.wikipedia.org/wiki/Tup%C3%A3_(mythology)).
 
 ## Contact information
-E-mail: mdpoleto@vt.edu / jalemkul@vt.edu
+E-mail: mdpoleto@ufv.br / jalemkul@vt.edu
 
 <a href="https://trackgit.com">
 <img src="https://us-central1-trackgit-analytics.cloudfunctions.net/token/ping/l02lg00zonn9v19irctl" alt="trackgit-views" />
