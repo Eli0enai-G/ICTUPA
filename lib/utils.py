@@ -89,6 +89,21 @@ def calc_ElectricField(atom,refposition):
 
     return Ef
 
+def calculate_Efprojection(universe, totalEf, config):
+    """ Calculate Electric Field projection onto bond"""
+    # Calculate efield projection
+    bond1 = universe.select_atoms(config.selbond1, updating=True)
+    bond2 = universe.select_atoms(config.selbond2, updating=True)
+    rbond_vec = (bond2.atoms[0].position - bond1.atoms[0].position)* 1e-10 # convert from Angstrom to meter
+    Efproj = projection(totalEf,rbond_vec)
+
+    # Calculate projection direction (either 1 or -1)
+    angle_deg = angle_between(totalEf,rbond_vec)
+    proj_direction = np.cos(np.radians(angle_deg)) / abs(np.cos(np.radians(angle_deg)))
+    # cosine betwenn 0-90 is positive (direction = 1)
+    # cosine between 90-180 is negative (directions = -1)
+
+    return Efproj, proj_direction, angle_deg, rbond_vec
 
 def pack_around(universe, atom_group, center):
     """ Transpose coordinates in a rectangular PBC box """
@@ -228,12 +243,12 @@ def create_probe_selection(universe, config):
                         listcoorY = float(coorline.split(",")[1])
                         listcoorZ = float(coorline.split(",")[2])
                     except:
-                        raise ValueError(""">>> ERROR: File of coordinates could not be parsed! Expecting floats or integers (X Y Z). Check your inputs!\n""")
+                        raise ValueError(""">>> ERROR: File of coordinates could not be parsed! Expecting floats or integers (X, Y, Z). Check your inputs!\n""")
                     
                     tmpcoorlist = np.array([listcoorX, listcoorY, listcoorZ])
                     probe_selection.append(tmpcoorlist)
                 else:
-                    raise ValueError(""">>> ERROR: File of coordinates could not be parsed! Expecting 3 columns (X Y Z). Check your inputs!\n""")
+                    raise ValueError(""">>> ERROR: File of coordinates could not be parsed! Expecting 3 columns (X, Y, Z). Check your inputs!\n""")
 
         # Sanity check: list of coordinates should have the same length as the trajectory
         if len(probe_selection) != len(universe.trajectory):
@@ -307,20 +322,6 @@ def update_environment(universe, config, elecfield_selection, refposition):
 
     return enviroment_selection
 
-
-def calculate_Efprojection(universe, totalEf, config):
-    """ Calculate Electric Field projection onto bond"""
-    # Calculate efield projection
-    bond1 = universe.select_atoms(config.selbond1, updating=True)
-    bond2 = universe.select_atoms(config.selbond2, updating=True)
-    rbond_vec = (bond2.atoms[0].position - bond1.atoms[0].position)* 1e-10 # convert from Angstrom to meter
-    Efproj = projection(totalEf,rbond_vec)
-
-    # Calculate projection direction (either 1 or -1)
-    angle_deg = angle_between(totalEf,rbond_vec)
-    proj_direction = np.cos(angle_deg)/abs(np.cos(angle_deg))
-
-    return Efproj, proj_direction, angle_deg, rbond_vec
 
 
 def add_to_dict(dict, key, array):
